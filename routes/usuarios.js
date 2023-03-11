@@ -4,6 +4,7 @@ const { getUsuarios, postUsuarios, putUsuarios, deleteUsuarios, putCarritoDeComp
 const { emailExiste, existeUsuarioPorId } = require('../helpers/db-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
+const { esAdminRole } = require('../middlewares/validar-role');
 
 
 
@@ -18,8 +19,6 @@ router.post('/agregar', [
     check('correo', 'El correo no es valido').isEmail(),
     check('correo').custom(emailExiste),
 
-
-
     validarCampos
 ], postUsuarios)
 
@@ -27,7 +26,7 @@ router.put('/editar/:id', [
     check('id', 'No es un ID valido').isMongoId(),
     check('correo', 'El correo no es valido').isEmail(),
     check('correo').custom(emailExiste),
-
+    
     validarCampos
 ], putUsuarios)
 
@@ -38,19 +37,19 @@ router.delete('/eliminar/:id', [
     validarCampos
 ] , deleteUsuarios);
 
-router.put('/carrito', [
+router.put('/shopCar', [
     validarJWT,
 ], putCarritoDeCompras);
 
-router.get('/mostrar/carrito/:id', [
+router.get('/mostrar/shopCar/:id', [
     validarJWT,
 ], getCarritoDeCompras);
 
-router.put('/delete/carrito/:id', [
+router.put('/delete/shopCar/:id', [
     validarJWT,
 ], putProductoDelCarrito);
 
-router.put('/quitar-Productos', [
+router.put('/vaciarShopCar', [
     validarJWT,
 ], EmptyShopCar);
 

@@ -21,11 +21,11 @@ const getUsuarios = async (req = request, res = response) => {
 const postUsuarios = async (req = request, res = response) => {
 
     if (req.body.rol == "") {
-        req.body.rol = "CLIENT"
+        req.body.rol = "CLIENTE"
     }
 
-    const { nombre, correo, password, rol } = req.body;
-    const usuarioDB = new Usuario({ nombre, correo, password, rol });
+    const { nombre, correo, password, role } = req.body;
+    const usuarioDB = new Usuario({ nombre, correo, password, role });
 
     //Encriptar password
     const salt = bcryptjs.genSaltSync();
@@ -42,34 +42,30 @@ const postUsuarios = async (req = request, res = response) => {
 }
 
 const putUsuarios = async (req = request, res = response) => {
-    if (req.body.rol == "") {
-        req.body.rol = "CLIENT"
+    
+    const { id, nombre } = req.params;
+
+    //Ignoramos el _id, rol, estado y google al momento de editar y mandar la petición en el req.body
+    const { _id, role, estado, ...resto } = req.body;
+
+
+    if (role !== 'ADMIN_ROLE') {
+        return res.status(401).json({
+            msg: `${ nombre } no puedes editar a otro admin`
+        });
     }
 
-    const {rol,nombre} = req.usuario
-    // const {nombre} = req.body;
-    if (rol !== 'ADMIN') {
-        return res.status(401).json({
-            msg: `${nombre} no es admin asi que no puedes editar los datos de un admin`
-        });
-    }else{
-        const { id } = req.params;
-    
-        //Ignoramos el _id al momento de editar y mandar la petición en el req.body
-        const { _id, rol, estado, ...resto } = req.body;
-    
-        // //Encriptar password
-        const salt = bcryptjs.genSaltSync();
-        resto.password = bcryptjs.hashSync(resto.password, salt);
-    
-        //editar y guardar
-        const usuarioEditado = await Usuario.findByIdAndUpdate(id, resto);
-    
-        res.json({
-            msg: 'PUT API de usuario',
-            usuarioEditado
-        });
-    }
+    // //Encriptar passw
+    resto.password = bcryptjs.hashSync(resto.password, salt);
+
+    //editar y guardar
+    const usuarioEditado = await Usuario.findByIdAndUpdate(id, resto);
+
+    res.json({
+        msg: 'PUT API de usuario',
+        usuarioEditado
+    }); rd
+    const salt = bcryptjs.genSaltSync();
 
 }
 
@@ -79,7 +75,7 @@ const deleteUsuarios = async (req = request, res = response) => {
     const {rol, nombre} = req.usuario
     if (rol !== 'ADMIN') {
         return res.status(401).json({
-            msg: `${nombre} es un cliente, no puede eliminar los datos de un admin`
+            msg: `${nombre} no puedes eliminar a otro admin`
         });
     }else{
         const { id } = req.params;

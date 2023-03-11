@@ -21,10 +21,10 @@ const UsuarioSchema = Schema({
     total: {
         type: Number
     },
-    rol: {
+    role: {
         type: String,
         required: true,
-      
+        default: 'CLIENTE'
     },
     estado: {
         type: Boolean,

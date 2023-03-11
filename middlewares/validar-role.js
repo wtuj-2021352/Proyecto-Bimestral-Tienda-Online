@@ -9,8 +9,8 @@ const esAdminRole = ( req = request, res = response, next ) => {
     }
 
     
-    const { rol, nombre  } = req.usuario
-    if ( rol !== 'ADMIN') {
+    const { role, nombre  } = req.usuario
+    if ( role !== 'ADMIN') {
         return res.status(401).json({
             msg: `${ nombre } no es ADMIN - No puede hacer esta acción`
         });
